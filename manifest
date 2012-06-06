@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0
+apiversion: 2
+description: Simple Drop in and Use QR code reader for iOS
+author: Tony Nuzzi
+license: See LICENSE file
+copyright: Copyright ©2012 Acktie, LLC, All Rights Reserved
+
+
+# these should not be edited
+name: acktie mobile qr ios
+moduleid: com.acktie.mobile.ios.qr
+guid: daf68a87-c5c5-44b0-84ef-6498e75cbc1e
+platform: iphone
+minsdk: 1.8.2

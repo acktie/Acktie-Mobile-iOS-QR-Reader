@@ -1,0 +1,15 @@
+tmp
+bin
+build
+*.zip
+*.class
+*.merge-left*
+*.merge-right*
+*.mine
+*.prej
+*.pyc
+*.pyo
+*.working
+.svn
+_svn
+svn-commit*.tmp
