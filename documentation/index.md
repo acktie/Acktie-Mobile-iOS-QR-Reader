@@ -13,6 +13,8 @@ Documented below are a list of the preloaded overlays.
 
 At this time, it is only for Apple iOS.
 
+**NOTE**: iPhone 3GS or higher is supported.
+
 ## Accessing the Acktie Mobile QR Module
 
 To access this module from JavaScript, you would do the following:
@@ -103,7 +105,7 @@ A float value between 0 - 1.  0 being fully transparent and 1 being fully visibl
 
 Example:
 
-alpha: 0.5f  // half transparent
+alpha: 0.5  // half transparent
 
 ### scanQRFromImageCapture
 
@@ -141,7 +143,7 @@ Example:
 		error : error,
 	});
 	
-NOTE: Specifying an imageName will override any color/layout that is also specified in the same overlay property. Meaning, with they are all specified imageName will take precedence.
+NOTE: Specifying an imageName will override any color/layout that is also specified in the same overlay property. Meaning, when they are both specified imageName will take precedence.
 
 However, alpha works on both regardless of what is used (color/layout or imageName).
 
@@ -151,6 +153,13 @@ NOTE: The overlay feature uses the standard @2x image name for high-res images (
 
 Here is a link to Apple's site for the support image types: [Link](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIImage_Class/Reference/Reference.html)
 
+## Known Issues:
+In rare instances the QR reader does not properly decode QR codes that contain certain characters.  For example in some instances sharp s (00DF) gets decoded as a "half width katakana semi-voiced sound mark" (FF9F) and small o with diaeresis (00F6) turned into a rectangle character (E490).
+To date these are the only characters that don't get properly decoded.  Also, it is only in certain circumstances. 
+
+There is a workaround included in the app.js sample if this happens.  You can do a unicode replacement of the characters to the correct characters.
+
+We are looking into how to fix this issue.
 
 ## Author
 

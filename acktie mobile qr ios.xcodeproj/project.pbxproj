@@ -105,6 +105,9 @@
 		EF5DD69E1575219D0023C18C /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		EF5DD6A0157521AC0023C18C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		EF5DD6A2157521BE0023C18C /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		EFA3F18A159A343400EF8480 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		EFA3F18B159A343400EF8480 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		EFA3F18E159A34B400EF8480 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +139,9 @@
 		0867D691FE84028FC02AAC07 /* acktie mobile qr ios */ = {
 			isa = PBXGroup;
 			children = (
+				EFA3F18E159A34B400EF8480 /* AudioToolbox.framework */,
+				EFA3F18A159A343400EF8480 /* AddressBook.framework */,
+				EFA3F18B159A343400EF8480 /* AddressBookUI.framework */,
 				EF5DD6A2157521BE0023C18C /* CoreMedia.framework */,
 				EF5DD6A0157521AC0023C18C /* AVFoundation.framework */,
 				EF5DD69E1575219D0023C18C /* CoreVideo.framework */,
@@ -309,6 +315,10 @@
 				Japanese,
 				French,
 				German,
+				de,
+				en,
+				fr,
+				sv,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* acktie mobile qr ios */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -484,6 +494,10 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-DDEBUG",
@@ -529,6 +543,10 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(TITANIUM_BASE_SDK)",
+					"$(TITANIUM_BASE_SDK2)",
+				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DTI_POST_1_2";

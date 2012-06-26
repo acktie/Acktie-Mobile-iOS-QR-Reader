@@ -12,7 +12,7 @@
 
 @implementation ComAcktieMobileIosQrModule
 
-static const int symbolValues[] = 
+static const enum zbar_symbol_type_e symbolValues[] = 
 {
     ZBAR_NONE,
     ZBAR_PARTIAL,
@@ -186,14 +186,14 @@ static const NSString* symbolKeys[] =
     r.origin.y = r.size.height - 54;
     r.size.height = 54;
     controls = [[UIView alloc] initWithFrame: r];
-    [controls setAlpha:0.4f];
+    [controls setAlpha:0.75f];
     controls.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleTopMargin;
     controls.backgroundColor = [UIColor blackColor];
     
     UIToolbar *toolbar = [UIToolbar new];
     r.origin.y = 0;
     toolbar.frame = r;
-    toolbar.barStyle = UIBarStyleBlackOpaque;
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
     toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     if(showScanButton)
@@ -232,7 +232,7 @@ static const NSString* symbolKeys[] =
            target: self
            action: @selector(cancel)]
           autorelease],
-         nil];
+         nil];    
     }
     
     [controls addSubview: toolbar];
@@ -357,6 +357,7 @@ static const NSString* symbolKeys[] =
         
         // Populate Callback data
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        
         [dictionary setObject:symbol.data forKey:@"data"];
         [dictionary setObject:symbol.typeName forKey:@"type"];             
         [self _fireEventToListener:@"success" withObject:dictionary listener:listener thisObject:nil];  
@@ -483,6 +484,7 @@ static const NSString* symbolKeys[] =
     reader.showsZBarControls = NO;
     reader.showsCameraControls = NO;
     [self initControls:reader :true :scanButtonName];
+
     
     [self show];
 }

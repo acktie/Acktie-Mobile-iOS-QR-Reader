@@ -1,1 +1,2 @@
 1.0 Initial Release
+1.1 Document encoding issue and other minor documentation, made toolbar less transparent, update app.js
