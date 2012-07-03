@@ -22,3 +22,7 @@ In no event will Acktie, LLC be liable for any amount greater than what you actu
 G) You may (in accordance with the documentation packaged with the Module) modify images, text files and the like to provide custom look or feel to the Module output. 
 
 You may NOT reverse engineer any module code to provide these customizations.  You may only use the provided means of customization.
+
+
+Portions of this software utilize the following for Image to PDF conversion:
+PDFImageConverter - Copyright (c) 2011 Sorin Nistor. All rights reserved. 
