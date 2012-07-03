@@ -54,6 +54,8 @@
 		EF5DD69F1575219D0023C18C /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5DD69E1575219D0023C18C /* CoreVideo.framework */; };
 		EF5DD6A1157521AC0023C18C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5DD6A0157521AC0023C18C /* AVFoundation.framework */; };
 		EF5DD6A3157521BE0023C18C /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF5DD6A2157521BE0023C18C /* CoreMedia.framework */; };
+		EFB07B4115A387340059AF66 /* ImageToPDF.h in Headers */ = {isa = PBXBuildFile; fileRef = EFB07B4015A387340059AF66 /* ImageToPDF.h */; };
+		EFB07B4415A387BB0059AF66 /* ImageToPDF.m in Sources */ = {isa = PBXBuildFile; fileRef = EFB07B4315A387BB0059AF66 /* ImageToPDF.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +110,8 @@
 		EFA3F18A159A343400EF8480 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		EFA3F18B159A343400EF8480 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		EFA3F18E159A34B400EF8480 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		EFB07B4015A387340059AF66 /* ImageToPDF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageToPDF.h; path = Classes/ImageToPDF.h; sourceTree = "<group>"; };
+		EFB07B4315A387BB0059AF66 /* ImageToPDF.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageToPDF.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +175,8 @@
 				24DE9E1011C5FE74003F90F6 /* ComAcktieMobileIosQrModuleAssets.m */,
 				24DD6CF71134B3F500162E58 /* ComAcktieMobileIosQrModule.h */,
 				24DD6CF81134B3F500162E58 /* ComAcktieMobileIosQrModule.m */,
+				EFB07B4015A387340059AF66 /* ImageToPDF.h */,
+				EFB07B4315A387BB0059AF66 /* ImageToPDF.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -278,6 +284,7 @@
 				EF5DD695157521590023C18C /* ZBarReaderViewController.h in Headers */,
 				EF5DD696157521590023C18C /* ZBarSDK.h in Headers */,
 				EF5DD697157521590023C18C /* ZBarSymbol.h in Headers */,
+				EFB07B4115A387340059AF66 /* ImageToPDF.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +361,7 @@
 			files = (
 				24DD6CFA1134B3F500162E58 /* ComAcktieMobileIosQrModule.m in Sources */,
 				24DE9E1211C5FE74003F90F6 /* ComAcktieMobileIosQrModuleAssets.m in Sources */,
+				EFB07B4415A387BB0059AF66 /* ImageToPDF.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

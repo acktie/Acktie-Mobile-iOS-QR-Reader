@@ -1,1 +1,1 @@
-python build.py;rm -rf /Library/Application\ Support/Titanium/modules/iphone/com.acktie.mobile.ios.qr/; unzip com.acktie.mobile.ios.qr-iphone-1.2.zip -d /Library/Application\ Support/Titanium/;
+python build.py;rm -rf /Library/Application\ Support/Titanium/modules/iphone/com.acktie.mobile.ios.qr/; unzip com.acktie.mobile.ios.qr-iphone-1.3.zip -d /Library/Application\ Support/Titanium/;

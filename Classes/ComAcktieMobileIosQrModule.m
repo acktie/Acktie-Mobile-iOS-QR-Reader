@@ -371,7 +371,14 @@ static const NSString* symbolKeys[] =
             
             if(color != nil && layout != nil)
             {
-                overlayImageName = [NSString stringWithFormat:@"%@-%@.png", layout, color];
+                if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) 
+                {
+                    overlayImageName = [NSString stringWithFormat:@"Center-%@-ipad.png", color];
+                }
+                else
+                {
+                    overlayImageName = [NSString stringWithFormat:@"%@-%@.png", layout, color];
+                }
             }
         
             NSString* imageName = [self overlayImageName:overlay];
@@ -386,24 +393,8 @@ static const NSString* symbolKeys[] =
                 UIImageView *imageView = [[UIImageView alloc] initWithImage:[self imageNamed:overlayImageName]];
                 imageView.backgroundColor = [UIColor clearColor];
                 imageView.alpha = [self overlayAlpha:overlay];
-                imageView.hidden = NO;
-            
-                // Configure reader
-                if([reader isKindOfClass:[ZBarReaderController class]])
-                {
-                    UIView* cameraOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
-                    cameraOverlay.backgroundColor = [UIColor clearColor];
-                    cameraOverlay.userInteractionEnabled = NO;
-                    cameraOverlay.hidden = NO;
-                    
-                    [cameraOverlay addSubview:imageView];
-
-                    reader.cameraOverlayView = cameraOverlay;
-                }
-                else
-                {
-                    reader.cameraOverlayView = imageView;
-                }
+                
+                reader.cameraOverlayView = imageView;
             }
         }
     }
