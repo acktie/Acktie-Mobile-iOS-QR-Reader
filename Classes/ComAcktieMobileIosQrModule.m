@@ -4,6 +4,7 @@
  * Appcelerator Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc.
  * and licensed under the Apache Public License (version 2)
  */
+#import <AVFoundation/AVFoundation.h>
 #import "ComAcktieMobileIosQrModule.h"
 #import "TiBase.h"
 #import "TiHost.h"
@@ -11,6 +12,9 @@
 #import "TiApp.h"
 
 @implementation ComAcktieMobileIosQrModule
+@synthesize continuous;
+@synthesize userControlLight;
+@synthesize allowZoom;
 
 static const enum zbar_symbol_type_e symbolValues[] = 
 {
@@ -178,6 +182,15 @@ static const NSString* symbolKeys[] =
     } 
 }
 
+- (UIBarButtonItem*) flexSpace
+{
+    return [[[UIBarButtonItem alloc]
+             initWithBarButtonSystemItem: UIBarButtonSystemItemFlexibleSpace
+             target: nil
+             action: nil]
+            autorelease];
+}
+
 - (void) initControls: (ZBarReaderViewController*) readerView: (BOOL) showScanButton: (NSString *) scanButtonName
 {    
     UIView *view = readerView.view;
@@ -186,59 +199,103 @@ static const NSString* symbolKeys[] =
     r.origin.y = r.size.height - 54;
     r.size.height = 54;
     controls = [[UIView alloc] initWithFrame: r];
+    controls.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.0];
+
     [controls setAlpha:0.75f];
     controls.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleTopMargin;
     controls.backgroundColor = [UIColor blackColor];
     
     UIToolbar *toolbar = [UIToolbar new];
+    toolbar.translucent = true;
     r.origin.y = 0;
     toolbar.frame = r;
     toolbar.barStyle = UIBarStyleBlackTranslucent;
     toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    if(showScanButton)
+    UIBarButtonSystemItem button = 0;
+    
+    if(continuous)
     {
-        toolbar.items =
-        [NSArray arrayWithObjects:
-         [[[UIBarButtonItem alloc]
-           initWithBarButtonSystemItem: UIBarButtonSystemItemCancel
-           target: self
-           action: @selector(cancel)]
-          autorelease],
-         [[[UIBarButtonItem alloc]
-           initWithBarButtonSystemItem: UIBarButtonSystemItemFlexibleSpace
-           target: nil
-           action: nil]
-          autorelease],
-         [[[UIBarButtonItem alloc]
-           initWithTitle: scanButtonName
-           style: UIBarButtonItemStyleDone
-           target: self
-           action: @selector(scan)]
-          autorelease],
-         [[[UIBarButtonItem alloc]
-           initWithBarButtonSystemItem: UIBarButtonSystemItemFlexibleSpace
-           target: nil
-           action: nil]
-          autorelease],
-         nil];    
+        button = UIBarButtonSystemItemDone;
     }
     else
     {
-        toolbar.items =
-        [NSArray arrayWithObjects:
-         [[[UIBarButtonItem alloc]
-           initWithBarButtonSystemItem: UIBarButtonSystemItemCancel
-           target: self
-           action: @selector(cancel)]
-          autorelease],
-         nil];    
+        button = UIBarButtonSystemItemCancel;
     }
     
+    NSMutableArray *toolBarItems = [[NSMutableArray alloc] init];
+    [toolBarItems addObject:[[[UIBarButtonItem alloc]
+                              initWithBarButtonSystemItem: button
+                              target: self
+                              action: @selector(cancel)]
+                             autorelease]];
+    [toolBarItems addObject:[self flexSpace]];
+    if(showScanButton)
+    {
+        [toolBarItems addObject:[[[UIBarButtonItem alloc]
+                                  initWithTitle: scanButtonName
+                                  style: UIBarButtonItemStyleDone
+                                  target: self
+                                  action: @selector(scan)]
+                                 autorelease]];
+        
+        [toolBarItems addObject:[self flexSpace]];
+    }
+    
+    if (userControlLight) 
+    {
+        lightSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+        [lightSwitch addTarget:self action:@selector(toggleLight) forControlEvents:UIControlEventValueChanged];
+        
+        [toolBarItems addObject:[[[UIBarButtonItem alloc]
+                                  initWithCustomView:lightSwitch]
+                                 autorelease]];
+    }
+
+    toolbar.items = toolBarItems;
     [controls addSubview: toolbar];
     [toolbar release];
-    
+        
     [view addSubview: controls];
+}
+
+- (void) turnLightOff
+{
+    if([reader isKindOfClass:[ZBarReaderController class]])
+    {
+        reader.cameraFlashMode = UIImagePickerControllerCameraFlashModeOff; 
+    }
+    else
+    {
+        reader.readerView.torchMode = AVCaptureTorchModeOff;
+    }
+}
+
+- (void) turnLightOn
+{
+    if([reader isKindOfClass:[ZBarReaderController class]])
+    {
+        reader.cameraFlashMode = UIImagePickerControllerCameraFlashModeOn; 
+    }
+    else
+    {
+        reader.readerView.torchMode = AVCaptureTorchModeOn;
+    }
+}
+
+- (void) toggleLight
+{
+    if(lightSwitch == nil)
+        return;
+    
+    if(lightSwitch.on)
+    {
+        [self turnLightOn];        
+    }
+    else
+    {
+        [self turnLightOff];
+    }
 }
 
 - (void) scan
@@ -253,8 +310,12 @@ static const NSString* symbolKeys[] =
     if([self respondsToSelector: cb])
         [self imagePickerControllerDidCancel: (UIImagePickerController*)reader];
     else
+    {
+        [UIApplication sharedApplication].statusBarHidden = NO; 
+        [NSThread sleepForTimeInterval:0.1f];
         [reader dismissModalViewControllerAnimated: YES];
-
+    }
+        
     [controls release];
     controls = nil;
 }
@@ -278,6 +339,24 @@ static const NSString* symbolKeys[] =
     
     //cameraMode
     reader.cameraMode = cameraMode;
+    
+    if ([reader isKindOfClass:[ZBarReaderViewController class]]) 
+    {
+        if(allowZoom)
+        {
+            reader.readerView.allowsPinchZoom = true;
+        }
+        else
+        {
+            reader.readerView.allowsPinchZoom = false;
+        }
+    }
+    
+    if(userControlLight)
+    {
+        // Default the light to off
+        [self turnLightOff];
+    }
     
     if(useOverlay)
     {
@@ -307,9 +386,24 @@ static const NSString* symbolKeys[] =
                 UIImageView *imageView = [[UIImageView alloc] initWithImage:[self imageNamed:overlayImageName]];
                 imageView.backgroundColor = [UIColor clearColor];
                 imageView.alpha = [self overlayAlpha:overlay];
+                imageView.hidden = NO;
             
                 // Configure reader
-                reader.cameraOverlayView = imageView;   
+                if([reader isKindOfClass:[ZBarReaderController class]])
+                {
+                    UIView* cameraOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+                    cameraOverlay.backgroundColor = [UIColor clearColor];
+                    cameraOverlay.userInteractionEnabled = NO;
+                    cameraOverlay.hidden = NO;
+                    
+                    [cameraOverlay addSubview:imageView];
+
+                    reader.cameraOverlayView = cameraOverlay;
+                }
+                else
+                {
+                    reader.cameraOverlayView = imageView;
+                }
             }
         }
     }
@@ -363,8 +457,13 @@ static const NSString* symbolKeys[] =
         [self _fireEventToListener:@"success" withObject:dictionary listener:listener thisObject:nil];  
     }
     
-    // dismiss the controller (NB: dismiss from the *picker*)
-    [reader dismissModalViewControllerAnimated: YES];
+    // Don't close the scanner if continuous is true
+    if(!continuous)
+    {
+        [UIApplication sharedApplication].statusBarHidden = NO; 
+        [NSThread sleepForTimeInterval:0.1f];
+        [reader dismissModalViewControllerAnimated: YES];
+    }
 }
 
 - (void) imagePickerControllerDidCancel: (UIImagePickerController*) imagePickerController
@@ -379,6 +478,8 @@ static const NSString* symbolKeys[] =
         [self _fireEventToListener:@"cancel" withObject:dictionary listener:listener thisObject:nil];   
     }
     
+    [UIApplication sharedApplication].statusBarHidden = NO; 
+    [NSThread sleepForTimeInterval:0.1f];
     [reader dismissModalViewControllerAnimated: YES];
 }
 
@@ -396,7 +497,58 @@ static const NSString* symbolKeys[] =
         [self _fireEventToListener:@"error" withObject:dictionary listener:listener thisObject:nil];    
     }
     
-    [reader dismissModalViewControllerAnimated: YES];
+    // Don't close the scanner if continuous is true
+    if(!continuous)
+    {
+        [UIApplication sharedApplication].statusBarHidden = NO; 
+        [NSThread sleepForTimeInterval:0.1f];
+        [reader dismissModalViewControllerAnimated: YES];
+    }
+}
+
+- (void) continuous: (id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if ([args objectForKey:@"continuous"] != nil) 
+    {
+        [self setContinuous:[TiUtils boolValue:[args objectForKey:@"continuous"]]];
+        NSLog([NSString stringWithFormat:@"continuous: %d", continuous]);
+    }
+    else
+    {
+        [self setContinuous:false];
+    }
+}
+
+- (void) userControlLight: (id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if ([args objectForKey:@"userControlLight"] != nil) 
+    {
+        [self setUserControlLight:[TiUtils boolValue:[args objectForKey:@"userControlLight"]]];
+        NSLog([NSString stringWithFormat:@"userControlLight: %d", userControlLight]);
+    }
+    else
+    {
+        [self setUserControlLight:false];
+    }
+}
+
+- (void) allowZoom: (id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if ([args objectForKey:@"allowZoom"] != nil) 
+    {
+        [self setAllowZoom:[TiUtils boolValue:[args objectForKey:@"allowZoom"]]];
+        NSLog([NSString stringWithFormat:@"allowZoom: %d", allowZoom]);
+    }
+    else
+    {
+        [self setAllowZoom:true];
+    }
 }
 
 #pragma mark Lifecycle
@@ -406,6 +558,9 @@ static const NSString* symbolKeys[] =
 	// this method is called when the module is first loaded
 	// you *must* call the superclass
 	[super startup];
+    [self setContinuous:false];
+    [self setUserControlLight:false];
+    [self setAllowZoom:true];
 	
 	NSLog(@"[INFO] %@ loaded",self);
 }
@@ -450,6 +605,9 @@ static const NSString* symbolKeys[] =
     UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeCamera;
     BOOL useOverlay = true;
     
+    [self continuous:args];
+    [self userControlLight:args];
+    [self allowZoom:args];
     [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
     
     // Use custom controls
@@ -479,6 +637,8 @@ static const NSString* symbolKeys[] =
         scanButtonName = [NSString stringWithString:name];
     }
     
+    [self continuous:args];
+    [self userControlLight:args];
     [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
     
     reader.showsZBarControls = NO;
@@ -500,6 +660,7 @@ static const NSString* symbolKeys[] =
     UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     BOOL useOverlay = false;
     
+    [self continuous:args];
     [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
     
     [self show];

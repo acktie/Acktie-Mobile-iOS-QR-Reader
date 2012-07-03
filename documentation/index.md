@@ -107,6 +107,15 @@ Example:
 
 alpha: 0.5  // half transparent
 
+##### allowZoom (optional):
+This feature controls whether or not the user is allowed to use the pitch to zoom gesture.
+
+Example:
+
+allowZoom: false,
+
+By default this value is true.
+
 ### scanQRFromImageCapture
 
 Scans a QR code from an image taken from the Camera.  The user will have to manually click scan for the QR Code to be scanned.
@@ -122,6 +131,36 @@ Example:
 		cancel : cancel,
 		error : error,
 	});
+
+## Additional options:
+These options apply to one to many of the above modes.
+
+### Apply to all
+
+##### continuous (optional):
+This feature will continuously scan for QR codes even after one has been detected.  The user will have to click the "Done" button to exit the QR scan screen.
+With each QR code that is detected the "success" event will be triggers so you program will be able to process each QR code.  Also, the application can use
+the phone virate feature to indicate a scan took place.  See example app.js for details.
+
+Example:
+
+continuous: true,
+
+By default this value is false.
+
+### Apply to scanQRFromCamera and scanQRFromImageCapture
+
+##### userControlLight (optional):
+This feature will presents the user an On/Off switch in which to control the flash/torch.  In scanQRFromCamera the light will be continuously on and in scanQRFromImageCapture
+the light will flash when the picture is taken.
+
+Example:
+
+userControlLight: true,
+
+By default this value is false.
+
+*NOTE*: By not setting this variable or setting it to false will default the mode to auto, which means the camera will make the determination when to use the light.
 
 ## Customize Overlay
 In this module's subdirectory lives is a directory called assets.  It contains all of the images used in the overlay process.  

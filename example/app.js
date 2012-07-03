@@ -4,7 +4,7 @@
 var qrreader = require("com.acktie.mobile.ios.qr");
 
 // open a single window
-var window = Ti.UI.createWindow({
+var self = Ti.UI.createWindow({
 	backgroundColor : 'white'
 });
 
@@ -15,7 +15,6 @@ var qrFromAlbumButton = Titanium.UI.createButton({
 	top : 10
 });
 
-// Open Photo Album to choose image with QR code
 qrFromAlbumButton.addEventListener('click', function() {
 	qrreader.scanQRFromAlbum({
 		success : success,
@@ -24,7 +23,7 @@ qrFromAlbumButton.addEventListener('click', function() {
 	});
 });
 
-window.add(qrFromAlbumButton);
+self.add(qrFromAlbumButton);
 
 var qrFromCameraButton = Titanium.UI.createButton({
 	title : 'QR Code from Camera (Sampling)',
@@ -32,13 +31,11 @@ var qrFromCameraButton = Titanium.UI.createButton({
 	width : '100%',
 	top : 60
 });
-
-// Launch Camera Feed and detect QR Code
 qrFromCameraButton.addEventListener('click', function() {
 	qrreader.scanQRFromCamera({
 		overlay : {
 			color : "blue",
-			layout : "full",
+			layout : "center",
 		},
 		success : success,
 		cancel : cancel,
@@ -46,26 +43,70 @@ qrFromCameraButton.addEventListener('click', function() {
 	});
 });
 
-window.add(qrFromCameraButton);
+self.add(qrFromCameraButton);
 
-var qrFromManualCameraButton = Titanium.UI.createButton({
-	title : 'QR Code from Camera (Manual Capture)',
+var qrFromCameraContButton = Titanium.UI.createButton({
+	title : 'From Camera (Sampling Continuous)',
 	height : 40,
 	width : '100%',
 	top : 110
 });
-
-// Launch Camera and have use manually take picture of QR Code
-qrFromManualCameraButton.addEventListener('click', function() {
-	qrreader.scanQRFromImageCapture({
+qrFromCameraContButton.addEventListener('click', function() {
+	qrreader.scanQRFromCamera({
+		overlay : {
+			color : "purple",
+			layout : "center",
+		},
+		continuous : true,
+		userControlLight : true,
+		allowZoom : false,
 		success : success,
 		cancel : cancel,
 		error : error,
 	});
 });
 
+self.add(qrFromCameraContButton);
+
+var qrFromManualCameraButton = Titanium.UI.createButton({
+	title : 'QR Code from Camera (Manual Capture)',
+	height : 40,
+	width : '100%',
+	top : 160
+});
+qrFromManualCameraButton.addEventListener('click', function() {
+	qrreader.scanQRFromImageCapture({
+		scanButtonName : 'Scan Code!',
+		success : success,
+		cancel : cancel,
+		error : error,
+	});
+});
+
+self.add(qrFromManualCameraButton);
+
+var qrFromManualContCameraButton = Titanium.UI.createButton({
+	title : 'Camera from Manual Capture (Continuous)',
+	height : 40,
+	width : '100%',
+	top : 210
+});
+qrFromManualContCameraButton.addEventListener('click', function() {
+	qrreader.scanQRFromImageCapture({
+		scanButtonName : 'Keep Scanning!',
+		continuous : true,
+		userControlLight : true,
+		success : success,
+		cancel : cancel,
+		error : error,
+	});
+});
+
+self.add(qrFromManualContCameraButton);
+
 function success(data) {
 	if(data != undefined && data.data != undefined) {
+		Titanium.Media.vibrate();
 		alert(data.data);
 	}
 };
@@ -77,47 +118,30 @@ function cancel() {
 function error() {
 	alert("error");
 };
-
-function success(data) {
-	if(data != undefined && data.data != undefined) {
-		alert(data.data);
-	}
-};
-
-function cancel() {
-	alert("Cancelled");
-};
-
-function error() {
-	alert("error");
-};
-
-window.add(qrFromManualCameraButton);
 
 window.open();
 
-
 /* Used to debug encoding issues
-function success(data) {
-	if(data != undefined && data.data != undefined) {
-		var newData = data.data.replace('\uFF9F', '\u00DF').replace('\uE490', '\u00F6');
-		Ti.API.info(newData);
-		Ti.API.info(toUnicode(newData));
-		alert(newData);
-	}
-};
+ function success(data) {
+ if(data != undefined && data.data != undefined) {
+ var newData = data.data.replace('\uFF9F', '\u00DF').replace('\uE490', '\u00F6');
+ Ti.API.info(newData);
+ Ti.API.info(toUnicode(newData));
+ alert(newData);
+ }
+ };
 
-function toUnicode(theString) {
-  var unicodeString = '';
-  for (var i=0; i < theString.length; i++) {
-  	var char = theString.charAt(i);
-    var theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
-    while (theUnicode.length < 4) {
-      theUnicode = '0' + theUnicode;
-    }
-    theUnicode = '\\u' + theUnicode;
-    unicodeString += theUnicode + char;
-  }
-  return unicodeString;
-}
+ function toUnicode(theString) {
+ var unicodeString = '';
+ for (var i=0; i < theString.length; i++) {
+ var char = theString.charAt(i);
+ var theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
+ while (theUnicode.length < 4) {
+ theUnicode = '0' + theUnicode;
+ }
+ theUnicode = '\\u' + theUnicode;
+ unicodeString += theUnicode + char;
+ }
+ return unicodeString;
+ }
  */

@@ -13,6 +13,11 @@
              KrollCallback *errorCallback;
              KrollCallback *cancelCallback;
     UIView *controls;
+    UISwitch *lightSwitch;
 }
+
+@property(nonatomic,readwrite,assign) BOOL continuous;
+@property(nonatomic,readwrite,assign) BOOL userControlLight;
+@property(nonatomic,readwrite,assign) BOOL allowZoom;
 
 @end
