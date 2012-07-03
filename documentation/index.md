@@ -95,7 +95,7 @@ The following are the value JSON values for overlay.
 *  full
 *  center
 
-NOTE: Both color and layout must be specified together.
+NOTE: Both color and layout must be specified together.  Also, iPad does not have a "full" option and will default to "center".
 
 ##### imageName (optional):
 Use this property if you want to use your own overlay image.  See the customize overlay section for more details.
