@@ -23,3 +23,5 @@ G) You may (in accordance with the documentation packaged with the Module) modif
 
 You may NOT reverse engineer any module code to provide these customizations.  You may only use the provided means of customization.
 
+Portions of this software utilize the following for Image to PDF conversion:
+PDFImageConverter - Copyright (c) 2011 Sorin Nistor. All rights reserved.
