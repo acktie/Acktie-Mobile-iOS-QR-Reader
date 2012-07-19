@@ -200,6 +200,12 @@ There is a workaround included in the app.js sample if this happens.  You can do
 
 We are looking into how to fix this issue.
 
+## Change Log
+*  1.0 Initial Release
+*  1.1 Document encoding issue and other minor documentation, made toolbar less transparent, update app.js
+*  1.2 Added a few features a customer requested.  Added Continuous Reader, ability for user to control the phone light, and disable pinch zoom.
+*  1.3 Added iPad image examples.  Added ipad support for supplied overlays.
+
 ## Author
 
 Tony Nuzzi @ Acktie

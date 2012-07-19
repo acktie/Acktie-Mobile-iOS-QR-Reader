@@ -119,7 +119,7 @@ function error() {
 	alert("error");
 };
 
-window.open();
+self.open();
 
 /* Used to debug encoding issues
  function success(data) {
