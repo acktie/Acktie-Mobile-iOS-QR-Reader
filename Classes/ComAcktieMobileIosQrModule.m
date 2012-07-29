@@ -15,6 +15,7 @@
 @synthesize continuous;
 @synthesize userControlLight;
 @synthesize allowZoom;
+@synthesize useShiftJISEncoding;
 
 static const enum zbar_symbol_type_e symbolValues[] = 
 {
@@ -322,6 +323,9 @@ static const NSString* symbolKeys[] =
 
 -(void)initScanner: (NSDictionary*) args: (NSString*) readerController: (ZBarReaderControllerCameraMode) cameraMode: (UIImagePickerControllerSourceType) sourceType: (BOOL) useOverlay
 {
+    // 
+    [self useShiftJISEncoding:args];
+    
     // init reader
     [self initReader: readerController];
     
@@ -415,6 +419,32 @@ static const NSString* symbolKeys[] =
 }
 
 // ZBarReaderDelegate Methods
+// Define Block variable to tests out different encodings
+void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* originalNSString, NSStringEncoding encoding) {
+    NSLog(@"Trying to convert \"%@\" using encoding: 0x%X", originalNSString, encoding);
+    BOOL canEncode = [originalNSString canBeConvertedToEncoding:encoding];
+    if (!canEncode)
+    {
+        NSLog(@"    Can not encode \"%@\" using encoding %X", originalNSString, encoding);
+    }
+    else
+    {
+        // Try encoding using NSString getCString:maxLength:encoding:
+        NSUInteger cStrLength = [originalNSString lengthOfBytesUsingEncoding:encoding];
+        char cstr[cStrLength];
+        [originalNSString getCString:cstr maxLength:cStrLength encoding:encoding];
+        NSLog(@"    Converted(1): \"%s\"  (expected length: %u)",
+              cstr, cStrLength);
+        
+        // Try encoding using NSString dataUsingEncoding:allowLossyConversion:          
+        NSData *strData = [originalNSString dataUsingEncoding:encoding allowLossyConversion:YES];
+        char cstr2[[strData length] + 1];
+        memcpy(cstr2, [strData bytes], [strData length] + 1);
+        cstr2[[strData length]] = '\0';
+        NSLog(@"    Converted(2): \"%s\"  (expected length: %u)",
+              cstr2, [strData length]);
+    }
+};
 
 - (void) imagePickerController: (UIImagePickerController*) imagePickerController
  didFinishPickingMediaWithInfo: (NSDictionary*) info
@@ -443,7 +473,24 @@ static const NSString* symbolKeys[] =
         // Populate Callback data
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
         
-        [dictionary setObject:symbol.data forKey:@"data"];
+        NSString *qrData = symbol.data;
+        
+        /*  Debugging encoding issues
+        tryGetCStringUsingEncoding(qrData, NSUTF8StringEncoding);
+        tryGetCStringUsingEncoding(qrData, NSUTF16StringEncoding);
+        tryGetCStringUsingEncoding(qrData, NSUTF32StringEncoding);
+        tryGetCStringUsingEncoding(qrData, NSShiftJISStringEncoding);
+         */
+        
+        // If true try to encode string with ShiftJIS (use by Chinese and Kanji)
+        if([self useShiftJISEncoding])
+        {
+            if ([qrData canBeConvertedToEncoding:NSShiftJISStringEncoding]) { 
+                qrData = [NSString stringWithCString:[qrData cStringUsingEncoding: NSShiftJISStringEncoding] encoding:NSUTF8StringEncoding]; 
+            }   
+        }
+        
+        [dictionary setObject:qrData forKey:@"data"];
         [dictionary setObject:symbol.typeName forKey:@"type"];             
         [self _fireEventToListener:@"success" withObject:dictionary listener:listener thisObject:nil];  
     }
@@ -454,7 +501,7 @@ static const NSString* symbolKeys[] =
         [UIApplication sharedApplication].statusBarHidden = NO; 
         [NSThread sleepForTimeInterval:0.1f];
         [reader dismissModalViewControllerAnimated: YES];
-    }
+    }    
 }
 
 - (void) imagePickerControllerDidCancel: (UIImagePickerController*) imagePickerController
@@ -539,6 +586,21 @@ static const NSString* symbolKeys[] =
     else
     {
         [self setAllowZoom:true];
+    }
+}
+
+- (void) useShiftJISEncoding: (id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if ([args objectForKey:@"useShiftJISEncoding"] != nil) 
+    {
+        [self setUseShiftJISEncoding:[TiUtils boolValue:[args objectForKey:@"useShiftJISEncoding"]]];
+        NSLog([NSString stringWithFormat:@"useShiftJISEncoding: %d", useShiftJISEncoding]);
+    }
+    else
+    {
+        [self setUseShiftJISEncoding:false];
     }
 }
 

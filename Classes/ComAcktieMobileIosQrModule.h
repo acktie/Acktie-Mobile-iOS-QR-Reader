@@ -19,5 +19,8 @@
 @property(nonatomic,readwrite,assign) BOOL continuous;
 @property(nonatomic,readwrite,assign) BOOL userControlLight;
 @property(nonatomic,readwrite,assign) BOOL allowZoom;
+@property(nonatomic,readwrite,assign) BOOL useShiftJISEncoding;
+
+- (void) useShiftJISEncoding: (id)args;
 
 @end

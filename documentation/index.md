@@ -148,6 +148,16 @@ continuous: true,
 
 By default this value is false.
 
+##### useShiftJISEncoding (optional):
+This option is used to try decode the QR code result witht the Shift JIS encoding.  This is necessary when decoding Chinese, Kanji and some German Characters.
+This options is recommended if you are controlling the QR code content but have seen instances where iOS throws an exception when using non-standard encoding.
+
+Example:
+
+useShiftJISEncoding: true,
+
+By default this value is false.
+
 ### Apply to scanQRFromCamera and scanQRFromImageCapture
 
 ##### userControlLight (optional):
