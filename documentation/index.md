@@ -11,8 +11,6 @@ This module allows for a quick integration of a QR reader into your Appcelerator
 Additionally, the Camera Feed option has the ability to provide an overlay on the feed.  Several colors and layout are provide by default with the module.  
 Documented below are a list of the preloaded overlays.
 
-At this time, it is only for Apple iOS.
-
 **NOTE**: iPhone 3GS or higher is supported.
 
 ## Accessing the Acktie Mobile QR Module
@@ -38,7 +36,7 @@ Example:
 	};
 
 *  cancel - Called if the user clicks the cancel button.
-*  error - Called if the scan was not successful in reading the QR code.
+*  error - Called if the scan was not successful in reading the QR code. (Only called from Image Capture)
 
 NOTE: Both cancel and error do not return data.
 
@@ -85,29 +83,29 @@ Example of Scanning from Camera with overlay:
 
 The following are the value JSON values for overlay.
 
-##### color (optional):
+#### color (optional):
 *  blue
 *  purple
 *  red
 *  yellow
 
-##### layout (optional):
+#### layout (optional):
 *  full
 *  center
 
 NOTE: Both color and layout must be specified together.  Also, iPad does not have a "full" option and will default to "center".
 
-##### imageName (optional):
+#### imageName (optional):
 Use this property if you want to use your own overlay image.  See the customize overlay section for more details.
 
-##### alpha (optional):
+#### alpha (optional):
 A float value between 0 - 1.  0 being fully transparent and 1 being fully visible.
 
 Example:
 
 alpha: 0.5  // half transparent
 
-##### allowZoom (optional):
+#### allowZoom (optional):
 This feature controls whether or not the user is allowed to use the pitch to zoom gesture.
 
 Example:
@@ -137,7 +135,7 @@ These options apply to one to many of the above modes.
 
 ### Apply to all
 
-##### continuous (optional):
+#### continuous (optional):
 This feature will continuously scan for QR codes even after one has been detected.  The user will have to click the "Done" button to exit the QR scan screen.
 With each QR code that is detected the "success" event will be triggers so you program will be able to process each QR code.  Also, the application can use
 the phone virate feature to indicate a scan took place.  See example app.js for details.
@@ -148,19 +146,19 @@ continuous: true,
 
 By default this value is false.
 
-##### useShiftJISEncoding (optional):
-This option is used to try decode the QR code result witht the Shift JIS encoding.  This is necessary when decoding Chinese, Kanji and some German Characters.
-This options is recommended if you are controlling the QR code content but have seen instances where iOS throws an exception when using non-standard encoding.
+#### useShiftJISEncoding (optional):
+This option is used to try decode the QR code result with the Shift JIS encoding.  This is necessary when decoding Kanji Characters.
+By default the QR code is decoded in UTF-8.  For most circumstances UTF-8 will work fine. 
 
 Example:
 
-useShiftJISEncoding: true,
+useJISEncoding: true,
 
 By default this value is false.
 
 ### Apply to scanQRFromCamera and scanQRFromImageCapture
 
-##### userControlLight (optional):
+#### userControlLight (optional):
 This feature will presents the user an On/Off switch in which to control the flash/torch.  In scanQRFromCamera the light will be continuously on and in scanQRFromImageCapture
 the light will flash when the picture is taken.
 
@@ -176,8 +174,12 @@ By default this value is false.
 In this module's subdirectory lives is a directory called assets.  It contains all of the images used in the overlay process.  
 In order to customize the overlay you will need to do 2 things:
 
--  Place your custom image in the assets directory
+-  Create a directory under your mobile app's "Resources" directory called "modules/com.acktie.mobile.android.qr".  This is the directory
+   where you will put your custom images.
 -  Use the property "imageName" in the scanQRFromCamera arguments (see above).
+
+NOTE: In previous versions of the documention it instructed you to put your custom images in the module asset directory.  That is still valid.  However, we have made change to allow you
+to place your custom images in your mobile application project.
 
 Example:
 

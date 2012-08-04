@@ -1,12 +1,15 @@
-// Example of using Acktie Mobile QR
+var qrreader = undefined;
+var qrCodeWindow = undefined;
+var qrCodeView = undefined;
 
-// Import
-var qrreader = require("com.acktie.mobile.ios.qr");
+if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+	qrreader = require('com.acktie.mobile.ios.qr');
+} else if (Ti.Platform.osname === 'android') {
+	qrreader = require('com.acktie.mobile.android.qr');
+}
 
-// open a single window
-var self = Ti.UI.createWindow({
-	backgroundColor : 'white'
-});
+//create object instance, a parasitic subclass of Observable
+var self = Ti.UI.createWindow({backgroundColor: 'white'});
 
 var qrFromAlbumButton = Titanium.UI.createButton({
 	title : 'QR Code from Camera (Album)',
@@ -16,11 +19,16 @@ var qrFromAlbumButton = Titanium.UI.createButton({
 });
 
 qrFromAlbumButton.addEventListener('click', function() {
-	qrreader.scanQRFromAlbum({
-		success : success,
-		cancel : cancel,
-		error : error,
-	});
+	// Android does not currently support reading from the Image Gallery
+	if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+		qrreader.scanQRFromAlbum({
+			success : success,
+			cancel : cancel,
+			error : error,
+		});
+	} else if (Ti.Platform.osname === 'android') {
+		alert("Scanning from Image Gallery is not support on Android");
+	}
 });
 
 self.add(qrFromAlbumButton);
@@ -32,15 +40,31 @@ var qrFromCameraButton = Titanium.UI.createButton({
 	top : 60
 });
 qrFromCameraButton.addEventListener('click', function() {
-	qrreader.scanQRFromCamera({
+	var options = {
+		// ** Android QR Reader properties (ignored by iOS)
+		backgroundColor : 'black',
+		width : '100%',
+		height : '90%',
+		top : 0,
+		left : 0,
+		// **
+
+		// ** Used by both iOS and Android
 		overlay : {
 			color : "blue",
 			layout : "center",
+			alpha : .75
 		},
 		success : success,
 		cancel : cancel,
 		error : error,
-	});
+	};
+
+	if (Ti.Platform.name == "android") {
+		scanQRFromCamera(options);
+	} else {
+		qrreader.scanQRFromCamera(options);
+	}
 });
 
 self.add(qrFromCameraButton);
@@ -52,18 +76,34 @@ var qrFromCameraContButton = Titanium.UI.createButton({
 	top : 110
 });
 qrFromCameraContButton.addEventListener('click', function() {
-	qrreader.scanQRFromCamera({
-		overlay : {
-			color : "purple",
-			layout : "center",
-		},
-		continuous : true,
+	var options = {
+		// ** Android QR Reader properties (ignored by iOS)
+		backgroundColor : 'black',
+		width : '100%',
+		height : '90%',
+		top : 0,
+		left : 0,
+		// **
+
+		// ** Used by iOS (allowZoom/userControlLight ignored on Android)
 		userControlLight : true,
 		allowZoom : false,
+
+		// ** Used by both iOS and Android
+		overlay : {
+			imageName : 'exampleBranding.png',
+		},
+		continuous : true,
 		success : success,
 		cancel : cancel,
 		error : error,
-	});
+	};
+
+	if (Ti.Platform.name == "android") {
+		scanQRFromCamera(options);
+	} else {
+		qrreader.scanQRFromCamera(options);
+	}
 });
 
 self.add(qrFromCameraContButton);
@@ -75,12 +115,33 @@ var qrFromManualCameraButton = Titanium.UI.createButton({
 	top : 160
 });
 qrFromManualCameraButton.addEventListener('click', function() {
-	qrreader.scanQRFromImageCapture({
+	var options = {
+		// ** Android QR Reader properties (ignored by iOS)
+		backgroundColor : 'black',
+		width : '100%',
+		height : '90%',
+		top : 0,
+		left : 0,
+		scanQRFromImageCapture : true,
+		overlay : {
+			color : "purple",
+			layout : "center",
+			alpha : .75
+		},
+		// **
+
+		// ** Used by both iOS and Android
 		scanButtonName : 'Scan Code!',
 		success : success,
 		cancel : cancel,
 		error : error,
-	});
+	};
+
+	if (Ti.Platform.name == "android") {
+		scanQRFromImageCapture(options);
+	} else {
+		qrreader.scanQRFromImageCapture(options);
+	}
 });
 
 self.add(qrFromManualCameraButton);
@@ -92,23 +153,44 @@ var qrFromManualContCameraButton = Titanium.UI.createButton({
 	top : 210
 });
 qrFromManualContCameraButton.addEventListener('click', function() {
-	qrreader.scanQRFromImageCapture({
-		scanButtonName : 'Keep Scanning!',
+	var options = {
+		// ** Android QR Reader properties (ignored by iOS)
+		backgroundColor : 'black',
+		width : '100%',
+		height : '90%',
+		top : 0,
+		left : 0,
+		scanQRFromImageCapture : true,
+		overlay : {
+			color : "red",
+			layout : "center",
+		},
+		// **
+
+		// ** Used by iOS (allowZoom/userControlLight ignored on Android)
 		continuous : true,
 		userControlLight : true,
+		// **
+
+		// ** Used by both iOS and Android
+		scanButtonName : 'Keep Scanning!',
 		success : success,
 		cancel : cancel,
 		error : error,
-	});
+	};
+
+	if (Ti.Platform.name == "android") {
+		scanQRFromImageCapture(options);
+	} else {
+		qrreader.scanQRFromImageCapture(options);
+	}
 });
 
 self.add(qrFromManualContCameraButton);
 
 function success(data) {
-	if(data != undefined && data.data != undefined) {
-		Titanium.Media.vibrate();
-		alert(data.data);
-	}
+	Titanium.Media.vibrate();
+	alert(data.data);
 };
 
 function cancel() {
@@ -119,29 +201,115 @@ function error() {
 	alert("error");
 };
 
-self.open();
-
-/* Used to debug encoding issues
- function success(data) {
- if(data != undefined && data.data != undefined) {
- var newData = data.data.replace('\uFF9F', '\u00DF').replace('\uE490', '\u00F6');
- Ti.API.info(newData);
- Ti.API.info(toUnicode(newData));
- alert(newData);
- }
- };
-
- function toUnicode(theString) {
- var unicodeString = '';
- for (var i=0; i < theString.length; i++) {
- var char = theString.charAt(i);
- var theUnicode = theString.charCodeAt(i).toString(16).toUpperCase();
- while (theUnicode.length < 4) {
- theUnicode = '0' + theUnicode;
- }
- theUnicode = '\\u' + theUnicode;
- unicodeString += theUnicode + char;
- }
- return unicodeString;
- }
+/*
+ * Function that mimics the iPhone QR Code reader behavior.
  */
+function scanQRFromCamera(options) {
+	qrCodeWindow = Titanium.UI.createWindow({
+		backgroundColor : 'black',
+		width : '100%',
+		height : '100%',
+	});
+	qrCodeView = qrreader.createQRCodeView(options);
+
+	var closeButton = Titanium.UI.createButton({
+		title : "close",
+		bottom : 0,
+		left : 0
+	});
+	var lightToggle = Ti.UI.createSwitch({
+		value : false,
+		bottom : 0,
+		right : 0
+	});
+
+	closeButton.addEventListener('click', function() {
+		qrCodeView.stop();
+		qrCodeWindow.close();
+	});
+
+	lightToggle.addEventListener('change', function() {
+		qrCodeView.toggleLight();
+	})
+
+	qrCodeWindow.add(qrCodeView);
+	qrCodeWindow.add(closeButton);
+
+	if (options.userControlLight != undefined && options.userControlLight) {
+		qrCodeWindow.add(lightToggle);
+	}
+
+	// NOTE: Do not make the window Modal.  It screws stuff up.  Not sure why
+	qrCodeWindow.open();
+}
+
+/*
+ * Function that mimics the iPhone QR Code reader behavior.
+ */
+function scanQRFromImageCapture(options) {
+
+	qrCodeWindow = Titanium.UI.createWindow({
+		backgroundColor : 'black',
+		width : '100%',
+		height : '100%',
+	});
+	qrCodeView = qrreader.createQRCodeView(options);
+
+	var closeButton = Titanium.UI.createButton({
+		title : "close",
+		bottom : 0,
+		left : 0
+	});
+
+	var scanQRCode = Titanium.UI.createButton({
+		title : options.scanButtonName,
+		bottom : 0,
+		left : '50%'
+	});
+
+	var lightToggle = Ti.UI.createSwitch({
+		value : false,
+		bottom : 0,
+		right : 0
+	});
+
+	closeButton.addEventListener('click', function() {
+		qrCodeView.stop();
+		qrCodeWindow.close();
+	});
+
+	scanQRCode.addEventListener('click', function() {
+		qrCodeView.scanQR();
+	});
+
+	lightToggle.addEventListener('change', function() {
+		qrCodeView.toggleLight();
+	})
+
+	qrCodeWindow.add(qrCodeView);
+	qrCodeWindow.add(scanQRCode);
+	qrCodeWindow.add(closeButton);
+
+	if (options.userControlLight != undefined && options.userControlLight) {
+		qrCodeWindow.add(lightToggle);
+	}
+
+	// NOTE: Do not make the window Modal.  It screws stuff up.  Not sure why
+	qrCodeWindow.open();
+}
+
+if (Ti.Platform.osname === 'android') {
+	var activity = Ti.Android.currentActivity;
+	activity.addEventListener('pause', function(e) {
+		Ti.API.info('Inside pause');
+		if (qrCodeView != undefined) {
+			qrCodeView.stop();
+		}
+
+		if (qrCodeWindow != undefined) {
+			qrCodeWindow.close();
+		}
+	});
+}
+
+self.open();

@@ -15,7 +15,7 @@
 @synthesize continuous;
 @synthesize userControlLight;
 @synthesize allowZoom;
-@synthesize useShiftJISEncoding;
+@synthesize useJISEncoding;
 
 static const enum zbar_symbol_type_e symbolValues[] = 
 {
@@ -324,7 +324,7 @@ static const NSString* symbolKeys[] =
 -(void)initScanner: (NSDictionary*) args: (NSString*) readerController: (ZBarReaderControllerCameraMode) cameraMode: (UIImagePickerControllerSourceType) sourceType: (BOOL) useOverlay
 {
     // 
-    [self useShiftJISEncoding:args];
+    [self useJISEncoding:args];
     
     // init reader
     [self initReader: readerController];
@@ -483,10 +483,10 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
          */
         
         // If true try to encode string with ShiftJIS (use by Chinese and Kanji)
-        if([self useShiftJISEncoding])
+        if([self useJISEncoding])
         {
             if ([qrData canBeConvertedToEncoding:NSShiftJISStringEncoding]) { 
-                qrData = [NSString stringWithCString:[qrData cStringUsingEncoding: NSShiftJISStringEncoding] encoding:NSUTF8StringEncoding]; 
+                qrData = [NSString stringWithCString:[qrData cStringUsingEncoding: NSShiftJISStringEncoding] encoding:NSShiftJISStringEncoding]; 
             }   
         }
         
@@ -589,19 +589,19 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     }
 }
 
-- (void) useShiftJISEncoding: (id)args
+- (void) useJISEncoding: (id)args
 {
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
-    if ([args objectForKey:@"useShiftJISEncoding"] != nil) 
+    if ([args objectForKey:@"useJISEncoding"] != nil) 
     {
-        [self setUseShiftJISEncoding:[TiUtils boolValue:[args objectForKey:@"useShiftJISEncoding"]]];
-        NSLog([NSString stringWithFormat:@"useShiftJISEncoding: %d", useShiftJISEncoding]);
+        [self setUseJISEncoding:[TiUtils boolValue:[args objectForKey:@"useJISEncoding"]]];
     }
     else
     {
-        [self setUseShiftJISEncoding:false];
+        [self setUseJISEncoding:false];
     }
+    NSLog([NSString stringWithFormat:@"useJISEncoding: %d", useJISEncoding]);
 }
 
 #pragma mark Lifecycle
