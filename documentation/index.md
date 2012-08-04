@@ -146,9 +146,9 @@ continuous: true,
 
 By default this value is false.
 
-#### useShiftJISEncoding (optional):
-This option is used to try decode the QR code result with the Shift JIS encoding.  This is necessary when decoding Kanji Characters.
-By default the QR code is decoded in UTF-8.  For most circumstances UTF-8 will work fine. 
+#### useJISEncoding (optional):
+This option is used to encode the QR code result with the Shift JIS encoding.  This is necessary when encoding Kanji Characters and UTF-8 is not sufficient.
+By default the QR encoder will use UTF-8.  For most circumstances UTF-8 will work fine. 
 
 Example:
 
@@ -217,7 +217,7 @@ We are looking into how to fix this issue.
 *  1.1 Document encoding issue and other minor documentation, made toolbar less transparent, update app.js
 *  1.2 Added a few features a customer requested.  Added Continuous Reader, ability for user to control the phone light, and disable pinch zoom.
 *  1.3 Added iPad image examples.  Added ipad support for supplied overlays.
-*  1.4 Added useShiftJISEndoding option.
+*  1.4 Added useJISEndoding option.
 
 ## Author
 
