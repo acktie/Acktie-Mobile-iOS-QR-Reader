@@ -84,18 +84,13 @@ static const NSString* symbolKeys[] =
     reader.readerDelegate = self;
 }
 
-- (UIImage *)imageNamed:(NSString *)name {    
-    NSString *path = [NSString stringWithFormat:@"modules/%@/%@", [self moduleId], name];
+- (UIImage *)imageNamed:(NSString *)name {
+    NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+    NSString *modulePathWithFile = [NSString stringWithFormat:@"/modules/%@/%@", [self moduleId], name];
+    NSString *fullPathWithFile = [NSString stringWithFormat:@"%@%@", bundlePath, modulePathWithFile];
+    NSLog(fullPathWithFile);
     
-    NSString *urlString = [NSString stringWithFormat:@"%@%@/%@", 
-                           [[[NSURL fileURLWithPath:path] absoluteString] stringByReplacingOccurrencesOfString:path withString:@""], 
-                           [[NSBundle mainBundle] resourcePath], 
-                           path, nil];
-    NSLog(urlString);
-    
-    NSURL *url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSStringEncodingConversionExternalRepresentation]];
-    
-    return [UIImage imageWithData:[[NSData alloc] initWithContentsOfURL:url]];
+    return [UIImage imageWithContentsOfFile:fullPathWithFile];
 }
 
 -(NSString*) overlayColor: (NSDictionary*) overlay
