@@ -6,16 +6,21 @@
  */
 #import <AVFoundation/AVFoundation.h>
 #import "ComAcktieMobileIosQrModule.h"
+#import "TiUIViewProxy.h"
 #import "TiBase.h"
 #import "TiHost.h"
 #import "TiUtils.h"
 #import "TiApp.h"
+#import "TiUIButtonProxy.h"
 
 @implementation ComAcktieMobileIosQrModule
 @synthesize continuous;
 @synthesize userControlLight;
 @synthesize allowZoom;
 @synthesize useJISEncoding;
+@synthesize proxy;
+@synthesize navBarButton;
+@synthesize popover;
 
 static const enum zbar_symbol_type_e symbolValues[] = 
 {
@@ -142,7 +147,7 @@ static const NSString* symbolKeys[] =
 -(float) overlayAlpha: (NSDictionary*) overlay
 {
     float alpha = [TiUtils floatValue:[overlay objectForKey:@"alpha"] def:1.0f];
-    NSLog([NSString stringWithFormat:@"%@ %d", @"alpha:", alpha]);
+    NSLog([NSString stringWithFormat:@"%@ %f", @"alpha:", alpha]);
     
     return alpha;
 }
@@ -495,6 +500,12 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     {
         [UIApplication sharedApplication].statusBarHidden = NO; 
         [NSThread sleepForTimeInterval:0.1f];
+        
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad && self.popover != nil) {
+            [self.popover dismissPopoverAnimated:YES];
+            [self setPopover:nil];
+        }
+        
         [reader dismissModalViewControllerAnimated: YES];
     }    
 }
@@ -513,6 +524,11 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     
     [UIApplication sharedApplication].statusBarHidden = NO; 
     [NSThread sleepForTimeInterval:0.1f];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad && self.popover != nil) {
+        [self.popover dismissPopoverAnimated:YES];
+        [self setPopover:nil];
+    }
+    
     [reader dismissModalViewControllerAnimated: YES];
 }
 
@@ -535,6 +551,11 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     {
         [UIApplication sharedApplication].statusBarHidden = NO; 
         [NSThread sleepForTimeInterval:0.1f];
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad && self.popover != nil) {
+            [self.popover dismissPopoverAnimated:YES];
+            [self setPopover:nil];
+        }
+        
         [reader dismissModalViewControllerAnimated: YES];
     }
 }
@@ -705,12 +726,43 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     
     NSString* readerController = @"ZBarReaderController";
     ZBarReaderControllerCameraMode cameraMode = ZBarReaderControllerCameraModeDefault;
-    UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    UIImagePickerControllerSourceType sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     BOOL useOverlay = false;
     
     [self continuous:args];
     [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
+    [self setProxy:nil];
+    [self setNavBarButton:nil];
     
-    [self show];
+    if([args objectForKey:@"view"] != nil)
+    {
+        [self setProxy:(TiViewProxy*)[args objectForKey:@"view"]];
+    }
+    else if([args objectForKey:@"navBarButton"] != nil)
+    {
+        UIBarButtonItem* button = ((TiUIButtonProxy *)[args objectForKey:@"navBarButton"]).barButtonItem;
+        [self setNavBarButton:button];
+    }
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        [self setPopover:[[UIPopoverController alloc] initWithContentViewController:reader]];
+        
+        if(self.navBarButton != nil)
+        {
+            [self.popover presentPopoverFromBarButtonItem:navBarButton permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
+        else if(self.proxy != nil)
+        {
+            [self.popover presentPopoverFromRect:self.proxy.view.frame inView:self.proxy.parent.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
+        else
+        {
+            NSLog(@"You must specify a \"view\" when calling the scanQRFromAlbum.");
+        }
+    }
+    else
+    {
+        [self show];
+    }
 }
 @end
