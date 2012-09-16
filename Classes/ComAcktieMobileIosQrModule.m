@@ -745,6 +745,12 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     }
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        if ([self.popover isPopoverVisible])
+        {
+             NSLog(@"Popover already exist and is being displayed.");
+            return;
+        }
+        
         [self setPopover:[[UIPopoverController alloc] initWithContentViewController:reader]];
         
         if(self.navBarButton != nil)
@@ -757,7 +763,7 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
         }
         else
         {
-            NSLog(@"You must specify a \"view\" when calling the scanQRFromAlbum.");
+            NSLog(@"You must specify a \"view\" or \"navBarButton\" on an iPad when calling the scanQRFromAlbum.");
         }
     }
     else
