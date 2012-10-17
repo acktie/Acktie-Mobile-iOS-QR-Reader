@@ -700,7 +700,7 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     
     if ([args objectForKey:@"scanButtonName"] != nil) 
     {
-        NSString* name = [args objectForKey:@"scanButtonName"];
+        NSString* name = [args objectForKey:@"scanButtonName"];;
         NSLog([NSString stringWithFormat:@"scanButtonName: %@", name]);
         
         scanButtonName = [NSString stringWithString:name];
