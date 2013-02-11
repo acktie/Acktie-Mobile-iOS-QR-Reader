@@ -21,6 +21,7 @@
 @synthesize proxy;
 @synthesize navBarButton;
 @synthesize popover;
+@synthesize cameraDevice;
 
 static const enum zbar_symbol_type_e symbolValues[] = 
 {
@@ -321,7 +322,7 @@ static const NSString* symbolKeys[] =
     controls = nil;
 }
 
--(void)initScanner: (NSDictionary*) args: (NSString*) readerController: (ZBarReaderControllerCameraMode) cameraMode: (UIImagePickerControllerSourceType) sourceType: (BOOL) useOverlay
+-(void)initScanner: (NSDictionary*) args: (NSString*) readerController: (ZBarReaderControllerCameraMode) cameraMode: (UIImagePickerControllerSourceType) sourceType: (BOOL) useOverlay: (UIImagePickerControllerCameraDevice) cameraDeviceToUse
 {
     // 
     [self useJISEncoding:args];
@@ -343,6 +344,12 @@ static const NSString* symbolKeys[] =
     
     //cameraMode
     reader.cameraMode = cameraMode;
+    
+    //cameraDevice
+    if(cameraDeviceToUse != 0)
+    {
+        reader.cameraDevice = cameraDeviceToUse;   
+    }
     
     if ([reader isKindOfClass:[ZBarReaderViewController class]]) 
     {
@@ -595,14 +602,36 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
     
     if ([args objectForKey:@"allowZoom"] != nil) 
-    {
-        [self setAllowZoom:[TiUtils boolValue:[args objectForKey:@"allowZoom"]]];
+    {        [self setAllowZoom:[TiUtils boolValue:[args objectForKey:@"allowZoom"]]];
         NSLog([NSString stringWithFormat:@"allowZoom: %d", allowZoom]);
     }
     else
     {
         [self setAllowZoom:true];
     }
+}
+
+- (void) useFrontCamera: (id)args
+{
+    ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
+    
+    if ([args objectForKey:@"useFrontCamera"] != nil)
+    {
+        if([TiUtils boolValue:[args objectForKey:@"useFrontCamera"]])
+        {
+            [self setCameraDevice:UIImagePickerControllerCameraDeviceFront];
+        }
+        else
+        {
+            [self setCameraDevice:UIImagePickerControllerCameraDeviceRear];
+        }
+    }
+    else
+    {
+        [self setCameraDevice:UIImagePickerControllerCameraDeviceRear];
+    }
+    
+     NSLog([NSString stringWithFormat:@"cameraDevice: %d", cameraDevice]);
 }
 
 - (void) useJISEncoding: (id)args
@@ -677,7 +706,8 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     [self continuous:args];
     [self userControlLight:args];
     [self allowZoom:args];
-    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
+    [self useFrontCamera:args];
+    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay :cameraDevice];
     
     // Use custom controls
     reader.showsZBarControls = NO;
@@ -708,7 +738,8 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     
     [self continuous:args];
     [self userControlLight:args];
-    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
+    [self useFrontCamera:args];
+    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay :cameraDevice];
     
     reader.showsZBarControls = NO;
     reader.showsCameraControls = NO;
@@ -730,7 +761,7 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
     BOOL useOverlay = false;
     
     [self continuous:args];
-    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay];
+    [self initScanner:args :readerController :cameraMode :sourceType :useOverlay :0];
     [self setProxy:nil];
     [self setNavBarButton:nil];
     
