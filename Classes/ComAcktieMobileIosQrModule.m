@@ -691,9 +691,9 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
 }
 
 #pragma Public APIs
-
 -(void)scanQRFromCamera:(id)args
 {
+    NSLog(@"DEPRECATED: PLEASE CREATE QR VIEW USING CREATE FUNCTION.  THIS FUNCTION WILL BE REMOVED IN THE FUTURE.");
     NSLog(@"scanQRFromCamera");
     ENSURE_UI_THREAD(scanQRFromCamera, args);
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);
@@ -718,6 +718,7 @@ void (^tryGetCStringUsingEncoding)(NSString*, NSStringEncoding) = ^(NSString* or
 
 -(void)scanQRFromImageCapture:(id)args
 {
+    NSLog(@"DEPRECATED: PLEASE CREATE QR VIEW USING CREATE FUNCTION.  THIS FUNCTION WILL BE REMOVED IN THE FUTURE.");
     NSLog(@"scanQRFromImageCapture");
     ENSURE_UI_THREAD(scanQRFromImageCapture, args);
     ENSURE_SINGLE_ARG_OR_NIL(args, NSDictionary);

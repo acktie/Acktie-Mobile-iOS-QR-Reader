@@ -2,12 +2,12 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 1.8
+version: 2.1
 apiversion: 2
 description: Simple Drop in and Use QR code reader for iOS
 author: Tony Nuzzi
 license: See LICENSE file
-copyright: Copyright ©2012 Acktie, LLC, All Rights Reserved
+copyright: Copyright ©2012-2013 Acktie, LLC, All Rights Reserved
 
 
 # these should not be edited
