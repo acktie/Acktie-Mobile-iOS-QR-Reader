@@ -129,6 +129,7 @@ kaywa.com/img.php?s=8&amp;d=%EF%BB%BF{%22name%22:%22%E7%8E%89%E7%B1%B3%22}
   * 1.7 iOS 6 support
   * 1.8 Front Facing Camera Support, Fixed an issue where apps were not build when using Ti Store Kit
   * 2.0 Simplified the QR code scanner. Scanning window is now created via the createQRView.
+  * 2.1 Fix 7.0 memory bug.
 
 ## Author
 
