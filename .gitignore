@@ -1,7 +1,6 @@
 tmp
 bin
 build
-*.zip
 *.class
 *.merge-left*
 *.merge-right*
